@@ -1,0 +1,66 @@
+-- Create the transport database
+CREATE DATABASE IF NOT EXISTS transport;
+
+-- Use the transport database
+USE transport;
+
+-- Create the Sender table
+CREATE TABLE IF NOT EXISTS Sender (
+    SenderID INT PRIMARY KEY,
+    PhoneNo VARCHAR(20),
+    GoodsCategory VARCHAR(255)
+);
+
+-- Create the Driver table
+CREATE TABLE IF NOT EXISTS Driver (
+    DriverID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    License VARCHAR(50),
+    PhoneNo VARCHAR(20)
+);
+
+-- Create the Receiver table
+CREATE TABLE IF NOT EXISTS Receiver (
+    ReceiverID INT PRIMARY KEY,
+    PhoneNo VARCHAR(20),
+    Address VARCHAR(255)
+);
+
+-- Create the Challan table
+CREATE TABLE IF NOT EXISTS Challan (
+    ChallanID INT PRIMARY KEY,
+    DriverID INT,
+    TruckNo VARCHAR(20),
+    FOREIGN KEY (DriverID) REFERENCES Driver(DriverID)
+);
+
+-- Create the MainStation table
+CREATE TABLE IF NOT EXISTS MainStation (
+    StationID INT PRIMARY KEY,
+    ChallanID INT,
+    ReceiverID INT,
+    FOREIGN KEY (ChallanID) REFERENCES Challan(ChallanID),
+    FOREIGN KEY (ReceiverID) REFERENCES Receiver(ReceiverID)
+);
+
+-- Create the Bill table
+CREATE TABLE IF NOT EXISTS Bill (
+    BillNo INT PRIMARY KEY,
+    ReceivingBranchID INT,
+    SenderID INT,
+    ReceiverID INT,
+    FOREIGN KEY (ReceivingBranchID) REFERENCES ReceivingBranch(ReceivingBranchID),
+    FOREIGN KEY (SenderID) REFERENCES Sender(SenderID),
+    FOREIGN KEY (ReceiverID) REFERENCES Receiver(ReceiverID)
+);
+
+-- Create the ReceivingBranch table
+CREATE TABLE IF NOT EXISTS ReceivingBranch (
+    ReceivingBranchID INT PRIMARY KEY,
+    BillNo INT,
+    ReceiverID INT,
+    ChallanID INT,
+    FOREIGN KEY (BillNo) REFERENCES Bill(BillNo),
+    FOREIGN KEY (ReceiverID) REFERENCES Receiver(ReceiverID),
+    FOREIGN KEY (ChallanID) REFERENCES Challan(ChallanID)
+);
